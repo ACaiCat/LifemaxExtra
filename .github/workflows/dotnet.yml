@@ -25,7 +25,7 @@ jobs:
           dotnet-version: '6.0.100'
       - name: Set custom tag name
         run: |
-          COUNT=$(echo git rev-list --count HEAD)
+          COUNT=$(git rev-list --count HEAD)
           echo "COUNT_SHA=$COUNT" >> $GITHUB_ENV
         shell: bash
       
@@ -36,6 +36,7 @@ jobs:
         run: 
           rm -rf out/*.json
           rm -rf out/HttpServer.dll
+          
       - name: Upload Plugin
         uses: actions/upload-artifact@v3
         with:
@@ -46,10 +47,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
-          SHORT_SHA: ${{ env.COUNT_SHA }}
+          COUNT_SHA: ${{ env.COUNT_SHA }}
         with:
           prerelease: true
-          tag_name: ${{ env.COUNT_SHA }}
-          name: Build
+          tag_name: v${{ env.COUNT_SHA }}
+          name: Build v${{ env.COUNT_SHA }}
           files: 
             out/*
